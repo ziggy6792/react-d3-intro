@@ -2,7 +2,7 @@
 import { Button, Grid } from '@mui/material';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import DragSliderAnimation from 'src/components/DragSlider';
+import DragSlider from 'src/components/DragSlider';
 import { GraphElements, ForceGraph, GraphNode } from 'src/components/ForceGraph';
 import useInterval from 'src/hooks/useInterval';
 import { PlayButton } from './PlayButton';
@@ -80,7 +80,7 @@ const Simulation: React.FC = () => {
                 />
               </Grid>
               <Grid item flexGrow={1}>
-                <DragSliderAnimation
+                <DragSlider
                   value={time}
                   rangeMax={maxTime}
                   onValueChanged={(value) => {
@@ -90,7 +90,7 @@ const Simulation: React.FC = () => {
                 />
               </Grid>
               <Grid item>
-                <DragSliderAnimation
+                <DragSlider
                   value={speed}
                   rangeMax={5}
                   ticks={4}

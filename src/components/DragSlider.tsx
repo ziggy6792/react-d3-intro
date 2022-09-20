@@ -55,7 +55,7 @@ const useStyles = makeStyles()(() => ({
   trackLines: {},
 }));
 
-const DragSliderAnimation: React.FC<IDragSliderProps> = ({
+const DragSlider: React.FC<IDragSliderProps> = ({
   value,
   onValueChanged,
   rangeMin = 0,
@@ -63,7 +63,6 @@ const DragSliderAnimation: React.FC<IDragSliderProps> = ({
   ticks = 10,
   handleFormatter = (sliderValue) => Math.floor(sliderValue),
 }) => {
-  // Maybe don't need this
   const [svg, setSvg] = useState<null | TSelection>(null);
 
   const svgRef = useRef<null | SVGSVGElement>(null);
@@ -147,4 +146,4 @@ const DragSliderAnimation: React.FC<IDragSliderProps> = ({
   );
 };
 
-export default DragSliderAnimation;
+export default DragSlider;
