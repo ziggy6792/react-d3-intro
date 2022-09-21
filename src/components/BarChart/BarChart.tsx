@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as d3 from 'd3';
+import { Button } from '@mui/material';
 
-interface IPieChartProps {}
-
-const barData = [
+const initialData = [
   { value: 2400, name: 'Chevrolet' },
   { value: 1230, name: 'Honda' },
   { value: 330, name: 'Nissan' },
@@ -19,10 +18,14 @@ const barData = [
   { value: 1200, name: 'Mercedes' },
 ];
 
-export const BarChart: React.FC<IPieChartProps> = (props) => {
+export const BarChart: React.FC = (props) => {
+  const [data, setData] = useState(initialData);
+
   useEffect(() => {
     // Selecting the element
     const element = document.getElementById('bar-chart');
+
+    // d3.select(element).select('svg').remove();
 
     // Setting dimensions
     const margin = { top: 40, right: 20, bottom: 50, left: 50 },
@@ -45,19 +48,19 @@ export const BarChart: React.FC<IPieChartProps> = (props) => {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Formatting the data
-    barData.forEach(function (d) {
+    data.forEach(function (d) {
       d.value = +d.value;
     });
 
     // Scaling the range of the data in the domains
     xScale.domain(
-      barData.map(function (d) {
+      data.map(function (d) {
         return d.name;
       })
     );
     yScale.domain([
       0,
-      d3.max(barData, function (d) {
+      d3.max(data, function (d) {
         return d.value;
       }),
     ]);
@@ -65,7 +68,7 @@ export const BarChart: React.FC<IPieChartProps> = (props) => {
     // Appending the rectangles for the bar chart
     svg
       .selectAll('.bar')
-      .data(barData)
+      .data(data)
       .enter()
       .append('rect')
       .attr('x', function (d) {
@@ -93,7 +96,19 @@ export const BarChart: React.FC<IPieChartProps> = (props) => {
 
     // Adding the y Axis
     svg.append('g').call(d3.axisLeft(yScale));
-  });
+  }, [data]);
 
-  return <div id='bar-chart' className='chart'></div>;
+  return (
+    <>
+      <Button
+        variant='contained'
+        onClick={() => {
+          setData((currData) => [...currData, { value: 2200, name: 'Item' + currData.length }]);
+        }}
+      >
+        Add Data
+      </Button>
+      <div id='bar-chart' className='chart'></div>
+    </>
+  );
 };
