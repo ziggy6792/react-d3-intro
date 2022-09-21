@@ -24,24 +24,20 @@ const Particles: React.FC = (props) => {
 
   const svgRef = useRef<null | SVGSVGElement>(null);
 
+  const width = Math.max(960, innerWidth);
+  const height = Math.max(500, innerHeight);
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
       return;
     }
 
-    const width = Math.max(960, innerWidth);
-    const height = Math.max(500, innerHeight);
-
     let i = 0;
 
-    svg.attr('width', width).attr('height', height);
+    const rect = svg.select('rect');
 
-    svg
-      .append('rect')
-      .attr('width', width)
-      .attr('height', height)
-      .on('ontouchstart' in document ? 'touchmove' : 'mousemove', particle);
+    rect.on('ontouchstart' in document ? 'touchmove' : 'mousemove', particle);
 
     function particle(event) {
       const m = d3.pointer(event);
@@ -64,7 +60,11 @@ const Particles: React.FC = (props) => {
     }
   }, [svg]);
 
-  return <svg ref={svgRef} className={classes.root}></svg>;
+  return (
+    <svg ref={svgRef} className={classes.root}>
+      <rect width={width} height={height}></rect>
+    </svg>
+  );
 };
 
 export default Particles;
