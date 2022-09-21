@@ -1,7 +1,8 @@
 /* eslint-disable no-restricted-globals */
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { makeStyles } from 'src/makeStyles';
+import { TSelection } from 'src/d3Types';
 
 const useStyles = makeStyles()(() => ({
   root: {
@@ -19,13 +20,22 @@ const useStyles = makeStyles()(() => ({
 const Particles: React.FC = (props) => {
   const { classes } = useStyles();
 
+  const [svg, setSvg] = useState<null | TSelection>(null);
+
+  const svgRef = useRef<null | SVGSVGElement>(null);
+
   useEffect(() => {
+    if (!svg) {
+      setSvg(d3.select(svgRef.current));
+      return;
+    }
+
     const width = Math.max(960, innerWidth);
     const height = Math.max(500, innerHeight);
 
     let i = 0;
 
-    const svg = d3.select('body').append('svg').attr('width', width).attr('height', height).attr('class', classes.root);
+    svg.attr('width', width).attr('height', height);
 
     svg
       .append('rect')
@@ -52,9 +62,9 @@ const Particles: React.FC = (props) => {
 
       event.preventDefault();
     }
-  });
+  }, [svg]);
 
-  return <div>hi</div>;
+  return <svg ref={svgRef} className={classes.root}></svg>;
 };
 
 export default Particles;
