@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { makeStyles } from 'src/makeStyles';
 import { TSelection } from 'src/d3Types';
+import useResizeObserver from 'src/hooks/useResizeObserver';
 
 const useStyles = makeStyles()(() => ({
   root: {
@@ -24,8 +25,9 @@ const Particles: React.FC = (props) => {
 
   const svgRef = useRef<null | SVGSVGElement>(null);
 
-  const width = Math.max(960, innerWidth);
-  const height = Math.max(500, innerHeight);
+  const wrapperRef = useRef<null | HTMLDivElement>();
+
+  const dimensions = useResizeObserver(wrapperRef);
 
   useEffect(() => {
     if (!svg) {
@@ -58,12 +60,14 @@ const Particles: React.FC = (props) => {
 
       event.preventDefault();
     }
-  }, [svg]);
+  }, [svg, dimensions]);
 
   return (
-    <svg ref={svgRef} className={classes.root}>
-      <rect width={width} height={height}></rect>
-    </svg>
+    <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+      <svg ref={svgRef} className={classes.root} style={{ width: '100%', height: '100%' }}>
+        <rect width={dimensions?.width} height={dimensions?.height}></rect>
+      </svg>
+    </div>
   );
 };
 

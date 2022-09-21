@@ -23,7 +23,9 @@ window.addEventListener('resize', () => {
 const App: React.FC = () => (
   <CacheProvider value={muiCache}>
     <ThemeProvider theme={theme}>
-      <Particles />
+      <div style={{ height: '100vh' }}>
+        <Particles />
+      </div>
     </ThemeProvider>
   </CacheProvider>
 );
