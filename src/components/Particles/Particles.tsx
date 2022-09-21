@@ -6,11 +6,11 @@ import { TSelection } from 'src/d3Types';
 import useResizeObserver from 'src/hooks/useResizeObserver';
 
 const useStyles = makeStyles()(() => ({
-  root: {
-    '& rect': {
-      fill: 'none',
-      pointerEvents: 'all',
-    },
+  rect: {
+    fill: 'none',
+    pointerEvents: 'all',
+  },
+  circleContainer: {
     '& circle': {
       fill: 'none',
       strokeWidth: '2.5px',
@@ -41,11 +41,13 @@ const Particles: React.FC = (props) => {
 
     rect.on('ontouchstart' in document ? 'touchmove' : 'mousemove', particle);
 
+    const circleContainer = svg.select(`.${classes.circleContainer}`);
+
     function particle(event) {
       const m = d3.pointer(event);
 
-      svg
-        .insert('circle', 'rect')
+      circleContainer
+        .append('circle')
         .attr('cx', m[0])
         .attr('cy', m[1])
         .attr('r', 1e-6)
@@ -60,12 +62,13 @@ const Particles: React.FC = (props) => {
 
       event.preventDefault();
     }
-  }, [svg, dimensions]);
+  }, [svg, dimensions, classes]);
 
   return (
     <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
-      <svg ref={svgRef} className={classes.root} style={{ width: '100%', height: '100%' }}>
-        <rect width={dimensions?.width} height={dimensions?.height}></rect>
+      <svg ref={svgRef} style={{ width: '100%', height: '100%' }}>
+        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect}></rect>
+        <g className={classes.circleContainer}></g>
       </svg>
     </div>
   );
