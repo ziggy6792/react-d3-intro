@@ -25,7 +25,7 @@ export const BarChart: React.FC = (props) => {
     // Selecting the element
     const element = document.getElementById('bar-chart');
 
-    // d3.select(element).select('svg').remove();
+    d3.select(element).select('svg').remove();
 
     // Setting dimensions
     const margin = { top: 40, right: 20, bottom: 50, left: 50 },
@@ -103,7 +103,7 @@ export const BarChart: React.FC = (props) => {
       <Button
         variant='contained'
         onClick={() => {
-          setData((currData) => [...currData, { value: 2200, name: 'Item' + currData.length }]);
+          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: 'Item' + currData.length }]);
         }}
       >
         Add Data
