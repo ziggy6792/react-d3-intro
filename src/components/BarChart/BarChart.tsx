@@ -28,9 +28,9 @@ export const BarChart: React.FC = (props) => {
     d3.select(element).select('svg').remove();
 
     // Setting dimensions
-    const margin = { top: 40, right: 20, bottom: 50, left: 50 },
-      width = 900 - margin.left - margin.right,
-      height = 480 - margin.top - margin.bottom;
+    const margin = { top: 40, right: 20, bottom: 50, left: 50 };
+    const width = 900 - margin.left - margin.right;
+    const height = 480 - margin.top - margin.bottom;
 
     // Setting X,Y scale ranges
     const xScale = d3.scaleBand().range([0, width]).padding(0.1);
@@ -45,25 +45,16 @@ export const BarChart: React.FC = (props) => {
       .attr('height', height + margin.top + margin.bottom)
       .attr('viewBox', `0 40 ${width + 80} ${height}`)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Formatting the data
-    data.forEach(function (d) {
+    data.forEach((d) => {
       d.value = +d.value;
     });
 
     // Scaling the range of the data in the domains
-    xScale.domain(
-      data.map(function (d) {
-        return d.name;
-      })
-    );
-    yScale.domain([
-      0,
-      d3.max(data, function (d) {
-        return d.value;
-      }),
-    ]);
+    xScale.domain(data.map((d) => d.name));
+    yScale.domain([0, d3.max(data, (d) => d.value)]);
 
     // Appending the rectangles for the bar chart
     svg
@@ -71,28 +62,19 @@ export const BarChart: React.FC = (props) => {
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', function (d) {
-        return xScale(d.name);
-      })
+      .attr('x', (d) => xScale(d.name))
       .attr('width', xScale.bandwidth())
       .style('fill', '#339cd9')
-      .attr('y', function () {
-        return height;
-      })
+      .attr('y', () => height)
       .attr('height', 0)
       .transition()
       .duration(800)
       .attr('y', (d) => yScale(d.value))
       .attr('height', (d) => height - yScale(d.value))
-      .delay((d, i) => {
-        return i * 100;
-      });
+      .delay((d, i) => i * 100);
 
     // Adding the x Axis
-    svg
-      .append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(xScale));
+    svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
 
     // Adding the y Axis
     svg.append('g').call(d3.axisLeft(yScale));
@@ -103,7 +85,7 @@ export const BarChart: React.FC = (props) => {
       <Button
         variant='contained'
         onClick={() => {
-          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: 'Item' + currData.length }]);
+          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: `Item${currData.length}` }]);
         }}
       >
         Add Data
