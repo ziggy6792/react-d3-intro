@@ -47,12 +47,6 @@ export const BarChart: React.FC = (props) => {
       return;
     }
 
-    // d3.select(element).select('svg').remove();
-
-    // Setting dimensions
-
-    // Setting X,Y scale ranges
-
     svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
@@ -71,7 +65,7 @@ export const BarChart: React.FC = (props) => {
       .attr('x', (d) => xScale(d.name))
       .attr('width', xScale.bandwidth())
       .style('fill', '#339cd9')
-      .attr('y', () => height)
+      .attr('y', height)
       .attr('height', 0)
       .transition()
       .duration(800)
@@ -111,7 +105,7 @@ export const BarChart: React.FC = (props) => {
             .attr('x', (d) => xScale(d.name))
             .attr('width', xScale.bandwidth())
             .style('fill', '#339cd9')
-            .attr('y', () => height)
+            .attr('y', height)
             .attr('height', 0)
             .transition()
             .duration(800)
@@ -123,7 +117,6 @@ export const BarChart: React.FC = (props) => {
             .transition()
             .duration(100)
             .delay(100)
-
             .attr('x', (d) => xScale(d.name))
             .attr('width', xScale.bandwidth()),
         (elem) => elem.transition().duration(100).attr('height', 0).attr('y', height).remove()
@@ -134,7 +127,7 @@ export const BarChart: React.FC = (props) => {
 
     xAxis.transition().duration(100).delay(100).call(d3.axisBottom(xScale));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, xScale, yScale]);
 
   return (
     <>
