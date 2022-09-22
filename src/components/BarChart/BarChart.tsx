@@ -116,14 +116,20 @@ export const BarChart: React.FC = (props) => {
             .duration(800)
             .attr('y', (d) => yScale(d.value))
             .attr('height', (d) => height - yScale(d.value)),
-        (elem) => elem.attr('x', (d) => xScale(d.name)).attr('width', xScale.bandwidth())
+        (elem) =>
+          elem
+            .transition()
+            .duration(100)
+            .attr('x', (d) => xScale(d.name))
+            .attr('width', xScale.bandwidth())
       );
 
     // Update X axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
 
-    xAxis.call(d3.axisBottom(xScale));
-  }, [data, svg, xScale, yScale]);
+    xAxis.transition().duration(100).delay(100).call(d3.axisBottom(xScale));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>
