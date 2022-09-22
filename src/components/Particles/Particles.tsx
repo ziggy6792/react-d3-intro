@@ -58,7 +58,7 @@ const Particles: React.FC = (props) => {
         .style('stroke-opacity', 1)
         .transition()
         .duration(2000)
-        .ease(Math.sqrt)
+        .ease((x) => d3.easeBounceOut(Math.sqrt(x)))
         .attr('r', 100)
         .style('stroke-opacity', 1e-6)
         .remove();
