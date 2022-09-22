@@ -33,7 +33,6 @@ module.exports = {
     'no-plusplus': 'off',
     'no-nested-ternary': 'off',
     'no-use-before-define': 'off',
-    'no-shadow': 'off',
     'no-param-reassign': 'off',
     'func-names': 'off',
     'no-restricted-imports': ['error', { patterns: ['../*', '..'] }],

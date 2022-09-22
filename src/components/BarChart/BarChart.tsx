@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { TSelection } from 'src/d3Types';
 import { Button, Stack } from '@mui/material';
@@ -32,16 +32,22 @@ export const BarChart: React.FC = (props) => {
 
   const [data, setData] = useState(initalData);
 
+  const { xScale, yScale } = useMemo(() => {
+    const xS = d3.scaleBand().range([0, width]).padding(0.1);
+
+    const yS = d3.scaleLinear().range([height, 0]);
+
+    // Scaling the range of the data in the domains
+    xS.domain(data.map((d) => d.name));
+    yS.domain([0, d3.max(data, (d) => d.value)]);
+    return { xScale: xS, yScale: yS };
+  }, [data]);
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
       return;
     }
-
-    // Setting X,Y scale ranges
-    const xScale = d3.scaleBand().range([0, width]).padding(0.1);
-
-    const yScale = d3.scaleLinear().range([height, 0]);
 
     svg
       .attr('width', width + margin.left + margin.right)
@@ -50,12 +56,6 @@ export const BarChart: React.FC = (props) => {
 
     // Appending svg to a selected element
     const chartGroup = svg.select('.chartGroup');
-
-    // Scaling the range of the data in the domains
-    xScale.domain(data.map((d) => d.name));
-    yScale.domain([0, d3.max(data, (d) => d.value)]);
-
-    chartGroup.selectAll('.bar').remove();
 
     // Appending the rectangles for the bar chart
     chartGroup
@@ -82,7 +82,40 @@ export const BarChart: React.FC = (props) => {
     // Adding the y Axis
     const yAxis = chartGroup.select('.yAxis') as TSelection;
     yAxis.call(d3.axisLeft(yScale));
-  }, [svg, data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [svg]);
+
+  useEffect(() => {
+    if (!svg) {
+      return;
+    }
+
+    // Appending svg to a selected element
+    const chartGroup = svg.select('.chartGroup');
+
+    // Appending the rectangles for the bar chart
+    chartGroup
+      .selectAll('.bar')
+      .data(data)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => xScale(d.name))
+      .attr('width', xScale.bandwidth())
+      .style('fill', '#339cd9')
+      .attr('y', () => height)
+      .attr('height', 0)
+      .transition()
+      .duration(800)
+      .attr('y', (d) => yScale(d.value))
+      .attr('height', (d) => height - yScale(d.value))
+      .delay(100);
+
+    // Adding the x Axis
+    const xAxis = chartGroup.select('.xAxis') as TSelection;
+    xAxis.call(d3.axisBottom(xScale));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, xScale, yScale]);
 
   return (
     <Stack>
