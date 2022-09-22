@@ -97,18 +97,23 @@ export const BarChart: React.FC = (props) => {
     chartGroup
       .selectAll('.bar')
       .data(data)
-      .join('rect')
-      .attr('class', 'bar')
-      .attr('x', (d) => xScale(d.name))
-      .attr('width', xScale.bandwidth())
-      .style('fill', '#339cd9')
-      .attr('y', () => height)
-      .attr('height', 0)
-      .transition()
-      .duration(800)
-      .attr('y', (d) => yScale(d.value))
-      .attr('height', (d) => height - yScale(d.value))
-      .delay(100);
+      .join(
+        (parentNode) =>
+          parentNode
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', (d) => xScale(d.name))
+            .attr('width', xScale.bandwidth())
+            .style('fill', '#339cd9')
+            .attr('y', () => height)
+            .attr('height', 0)
+            .transition()
+            .duration(800)
+            .attr('y', (d) => yScale(d.value))
+            .attr('height', (d) => height - yScale(d.value))
+            .delay(100),
+        (elem) => elem.attr('x', (d) => xScale(d.name)).attr('width', xScale.bandwidth())
+      );
 
     // Adding the x Axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
