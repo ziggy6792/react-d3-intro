@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Button, Stack } from '@mui/material';
 import { TSelection } from 'src/d3Types';
@@ -150,7 +150,7 @@ export const BarChart: React.FC = (props) => {
         </Button>
         <svg ref={svgRef}>
           <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
-            <g className='xAxis' transform={`translate(0,${height})`}></g>
+            <g className='xAxis' transform={`translate(0,${height})`} />
             <g className='yAxis'> </g>
           </g>
         </svg>

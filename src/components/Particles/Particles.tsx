@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { makeStyles } from 'src/makeStyles';
 import { TSelection } from 'src/d3Types';
 import useResizeObserver from 'src/hooks/useResizeObserver';
-
-interface IParticlesProps {}
 
 const useStyles = makeStyles()(() => ({
   rect: {
@@ -19,7 +17,7 @@ const useStyles = makeStyles()(() => ({
   },
 }));
 
-const Particles: React.FC<IParticlesProps> = (props) => {
+const Particles: React.FC = (props) => {
   const { classes } = useStyles();
 
   const [svg, setSvg] = useState<null | TSelection>(null);
@@ -45,7 +43,7 @@ const Particles: React.FC<IParticlesProps> = (props) => {
     const circleContainer = svg.select(`.${classes.circleContainer}`);
 
     function particle(event) {
-      let m = d3.pointer(event);
+      const m = d3.pointer(event);
 
       circleContainer
         .append('circle')
@@ -68,8 +66,8 @@ const Particles: React.FC<IParticlesProps> = (props) => {
   return (
     <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
       <svg ref={svgRef} style={{ width: '100%', height: '100%' }}>
-        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect}></rect>
-        <g className={classes.circleContainer}></g>
+        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect} />
+        <g className={classes.circleContainer} />
       </svg>
     </div>
   );
