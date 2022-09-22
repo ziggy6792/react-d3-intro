@@ -67,8 +67,8 @@ const Particles: React.FC = (props) => {
   return (
     <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
       <svg ref={svgRef} style={{ width: '100%', height: '100%' }}>
-        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect}></rect>
         <g className={classes.circleContainer}></g>
+        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect}></rect>
       </svg>
     </div>
   );
