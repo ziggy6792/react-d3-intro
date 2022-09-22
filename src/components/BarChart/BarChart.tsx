@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { TSelection } from 'src/d3Types';
 
 const initialData = [
@@ -19,6 +19,10 @@ const initialData = [
   { value: 1200, name: 'Mercedes' },
 ];
 
+const margin = { top: 40, right: 20, bottom: 50, left: 50 };
+const width = 900 - margin.left - margin.right;
+const height = 480 - margin.top - margin.bottom;
+
 export const BarChart: React.FC = (props) => {
   const [data, setData] = useState(initialData);
 
@@ -35,9 +39,6 @@ export const BarChart: React.FC = (props) => {
     // d3.select(element).select('svg').remove();
 
     // Setting dimensions
-    const margin = { top: 40, right: 20, bottom: 50, left: 50 };
-    const width = 900 - margin.left - margin.right;
-    const height = 480 - margin.top - margin.bottom;
 
     // Setting X,Y scale ranges
     const xScale = d3.scaleBand().range([0, width]).padding(0.1);
@@ -50,7 +51,7 @@ export const BarChart: React.FC = (props) => {
       .attr('viewBox', `0 40 ${width + 80} ${height}`);
 
     // Appending svg to a selected element
-    const axisGroup = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+    const chartGroup = svg.select('.chartGroup');
 
     // Formatting the data
     data.forEach((d) => {
@@ -61,12 +62,15 @@ export const BarChart: React.FC = (props) => {
     xScale.domain(data.map((d) => d.name));
     yScale.domain([0, d3.max(data, (d) => d.value)]);
 
+    chartGroup.selectChildren().remove();
+
     // Appending the rectangles for the bar chart
-    axisGroup
+    chartGroup
       .selectAll('.bar')
       .data(data)
       .enter()
       .append('rect')
+      .attr('class', 'bar')
       .attr('x', (d) => xScale(d.name))
       .attr('width', xScale.bandwidth())
       .style('fill', '#339cd9')
@@ -79,23 +83,27 @@ export const BarChart: React.FC = (props) => {
       .delay((d, i) => i * 100);
 
     // Adding the x Axis
-    axisGroup.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
+    chartGroup.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
 
     // Adding the y Axis
-    axisGroup.append('g').call(d3.axisLeft(yScale));
+    chartGroup.append('g').call(d3.axisLeft(yScale));
   }, [data, svg]);
 
   return (
     <>
-      <Button
-        variant='contained'
-        onClick={() => {
-          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: `Item${currData.length}` }]);
-        }}
-      >
-        Add Data
-      </Button>
-      <svg ref={svgRef} />
+      <Stack>
+        <Button
+          variant='contained'
+          onClick={() => {
+            setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: `Item${currData.length}` }]);
+          }}
+        >
+          Add Data
+        </Button>
+        <svg ref={svgRef}>
+          <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}></g>
+        </svg>
+      </Stack>
     </>
   );
 };
