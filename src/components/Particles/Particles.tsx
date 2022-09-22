@@ -1,18 +1,28 @@
 /* eslint-disable no-restricted-globals */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 import './particles.css';
+import { TSelection } from 'src/d3Types';
 
 // eslint-disable-next-line arrow-body-style
 export const Particles: React.FC = (props) => {
+  const [svg, setSvg] = useState<null | TSelection>(null);
+
+  const svgRef = useRef<null | SVGSVGElement>(null);
+
   useEffect(() => {
+    if (!svg) {
+      setSvg(d3.select(svgRef.current));
+      return;
+    }
+
     const width = Math.max(960, innerWidth);
     const height = Math.max(500, innerHeight);
 
     let i = 0;
 
-    const svg = d3.select('body').append('svg').attr('width', width).attr('height', height);
+    svg.attr('width', width).attr('height', height);
 
     svg
       .append('rect')
@@ -39,7 +49,7 @@ export const Particles: React.FC = (props) => {
 
       event.preventDefault();
     }
-  });
+  }, [svg]);
 
-  return <div>hi</div>;
+  return <svg ref={svgRef} />;
 };
