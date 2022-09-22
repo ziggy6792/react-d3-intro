@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Button, Stack } from '@mui/material';
 import { TSelection } from 'src/d3Types';
@@ -30,6 +30,17 @@ export const BarChart: React.FC = (props) => {
 
   const svgRef = useRef<null | SVGSVGElement>(null);
 
+  const { xScale, yScale } = useMemo(() => {
+    const xS = d3.scaleBand().range([0, width]).padding(0.1);
+
+    const yS = d3.scaleLinear().range([height, 0]);
+
+    // Scaling the range of the data in the domains
+    xS.domain(data.map((d) => d.name));
+    yS.domain([0, d3.max(data, (d) => d.value)]);
+    return { xScale: xS, yScale: yS };
+  }, [data]);
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
@@ -41,9 +52,6 @@ export const BarChart: React.FC = (props) => {
     // Setting dimensions
 
     // Setting X,Y scale ranges
-    const xScale = d3.scaleBand().range([0, width]).padding(0.1);
-
-    const yScale = d3.scaleLinear().range([height, 0]);
 
     svg
       .attr('width', width + margin.left + margin.right)
@@ -52,17 +60,6 @@ export const BarChart: React.FC = (props) => {
 
     // Appending svg to a selected element
     const chartGroup = svg.select('.chartGroup');
-
-    // Formatting the data
-    data.forEach((d) => {
-      d.value = +d.value;
-    });
-
-    // Scaling the range of the data in the domains
-    xScale.domain(data.map((d) => d.name));
-    yScale.domain([0, d3.max(data, (d) => d.value)]);
-
-    chartGroup.selectAll('.bar').remove();
 
     // Appending the rectangles for the bar chart
     chartGroup
@@ -90,7 +87,42 @@ export const BarChart: React.FC = (props) => {
     // Adding the x Axis
     const yAxis = chartGroup.select('.yAxis') as TSelection;
     yAxis.call(d3.axisLeft(yScale));
-  }, [data, svg]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [svg]);
+
+  useEffect(() => {
+    if (!svg) {
+      return;
+    }
+
+    // Appending svg to a selected element
+    const chartGroup = svg.select('.chartGroup');
+
+    chartGroup.selectAll('.bar').remove();
+
+    // Appending the rectangles for the bar chart
+    chartGroup
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => xScale(d.name))
+      .attr('width', xScale.bandwidth())
+      .style('fill', '#339cd9')
+      .attr('y', () => height)
+      .attr('height', 0)
+      .transition()
+      .duration(800)
+      .attr('y', (d) => yScale(d.value))
+      .attr('height', (d) => height - yScale(d.value))
+      .delay((d, i) => i * 100);
+
+    // Update X axis
+    const xAxis = chartGroup.select('.xAxis') as TSelection;
+
+    xAxis.call(d3.axisBottom(xScale));
+  }, [data, svg, xScale, yScale]);
 
   return (
     <>
