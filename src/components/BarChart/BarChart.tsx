@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { TSelection } from 'src/d3Types';
 
 const barData = [
   { value: 2400, name: 'Chevrolet' },
@@ -19,7 +20,16 @@ const barData = [
 
 // eslint-disable-next-line arrow-body-style
 export const BarChart: React.FC = (props) => {
+  const [svg, setSvg] = useState<null | TSelection>(null);
+
+  const svgRef = useRef<null | SVGSVGElement>(null);
+
   useEffect(() => {
+    if (!svg) {
+      setSvg(d3.select(svgRef.current));
+      return;
+    }
+
     const element = document.getElementById('bar-chart');
 
     // Setting dimensions
@@ -32,27 +42,20 @@ export const BarChart: React.FC = (props) => {
 
     const yScale = d3.scaleLinear().range([height, 0]);
 
-    // Appending svg to a selected element
-    const svg = d3
-      .select(element)
-      .append('svg')
+    svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
-      .attr('viewBox', `0 40 ${width + 80} ${height}`)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+      .attr('viewBox', `0 40 ${width + 80} ${height}`);
 
-    // Formatting the data
-    barData.forEach((d) => {
-      d.value = +d.value;
-    });
+    // Appending svg to a selected element
+    const chart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Scaling the range of the data in the domains
     xScale.domain(barData.map((d) => d.name));
     yScale.domain([0, d3.max(barData, (d) => d.value)]);
 
     // Appending the rectangles for the bar chart
-    svg
+    chart
       .selectAll('.bar')
       .data(barData)
       .enter()
@@ -69,11 +72,11 @@ export const BarChart: React.FC = (props) => {
       .delay((d, i) => i * 100);
 
     // Adding the x Axis
-    svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
+    chart.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
 
     // Adding the y Axis
-    svg.append('g').call(d3.axisLeft(yScale));
-  });
+    chart.append('g').call(d3.axisLeft(yScale));
+  }, [svg]);
 
-  return <div id='bar-chart' />;
+  return <svg ref={svgRef} />;
 };
