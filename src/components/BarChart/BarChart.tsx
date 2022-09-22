@@ -112,12 +112,19 @@ export const BarChart: React.FC = (props) => {
             .attr('y', (d) => yScale(d.value))
             .attr('height', (d) => height - yScale(d.value))
             .delay(100),
-        (elem) => elem.attr('x', (d) => xScale(d.name)).attr('width', xScale.bandwidth())
+        (elem) =>
+          elem
+            .transition()
+            .delay(100)
+            .duration(100)
+            .attr('x', (d) => xScale(d.name))
+            .attr('width', xScale.bandwidth()),
+        (elem) => elem.transition().duration(100).attr('height', 0).attr('y', height).remove()
       );
 
     // Adding the x Axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
-    xAxis.call(d3.axisBottom(xScale));
+    xAxis.transition().delay(100).duration(100).call(d3.axisBottom(xScale));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, xScale, yScale]);
@@ -131,6 +138,14 @@ export const BarChart: React.FC = (props) => {
         }}
       >
         Add Data
+      </Button>
+      <Button
+        variant='contained'
+        onClick={() => {
+          setData((currData) => currData.splice(0, currData.length - 1));
+        }}
+      >
+        Remove Data
       </Button>
       <svg ref={svgRef}>
         <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
