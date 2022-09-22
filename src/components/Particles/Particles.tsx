@@ -1,11 +1,14 @@
 /* eslint-disable no-restricted-globals */
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { makeStyles } from 'src/makeStyles';
 import { TSelection } from 'src/d3Types';
 import useResizeObserver from 'src/hooks/useResizeObserver';
 
 const useStyles = makeStyles()(() => ({
+  root: {
+    background: '#222',
+  },
   rect: {
     fill: 'none',
     pointerEvents: 'all',
@@ -66,9 +69,9 @@ const Particles: React.FC = (props) => {
 
   return (
     <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
-      <svg ref={svgRef} style={{ width: '100%', height: '100%' }}>
-        <g className={classes.circleContainer}></g>
-        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect}></rect>
+      <svg ref={svgRef} style={{ width: '100%', height: '100%' }} className={classes.root}>
+        <g className={classes.circleContainer} />
+        <rect width={dimensions?.width} height={dimensions?.height} className={classes.rect} />
       </svg>
     </div>
   );
