@@ -113,31 +113,35 @@ export const BarChart: React.FC = (props) => {
     // Appending svg to a selected element
     const chartGroup = svg.select('.chartGroup');
 
-    chartGroup.selectAll('.bar').remove();
-
     // Appending the rectangles for the bar chart
     chartGroup
       .selectAll('.bar')
       .data(data)
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', function (d) {
-        return xScale(d.name);
-      })
-      .attr('width', xScale.bandwidth())
-      .style('fill', '#339cd9')
-      .attr('y', function () {
-        return height;
-      })
-      .attr('height', 0)
-      .transition()
-      .duration(800)
-      .attr('y', (d) => yScale(d.value))
-      .attr('height', (d) => height - yScale(d.value))
-      .delay((d, i) => {
-        return i * 100;
-      });
+      .join(
+        (nodeParent) =>
+          nodeParent
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', function (d) {
+              return xScale(d.name);
+            })
+            .attr('width', xScale.bandwidth())
+            .style('fill', '#339cd9')
+            .attr('y', function () {
+              return height;
+            })
+            .attr('height', 0)
+            .transition()
+            .duration(800)
+            .attr('y', (d) => yScale(d.value))
+            .attr('height', (d) => height - yScale(d.value)),
+        (elem) =>
+          elem
+            .attr('x', function (d) {
+              return xScale(d.name);
+            })
+            .attr('width', xScale.bandwidth())
+      );
 
     // Update X axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
