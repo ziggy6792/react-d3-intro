@@ -71,7 +71,7 @@ export const BarChart: React.FC = (props) => {
       }),
     ]);
 
-    chartGroup.selectChildren().remove();
+    chartGroup.selectAll('.bar').remove();
 
     // Appending the rectangles for the bar chart
     chartGroup
@@ -98,13 +98,13 @@ export const BarChart: React.FC = (props) => {
       });
 
     // Adding the x Axis
-    chartGroup
-      .append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(xScale));
+    const xAxis = chartGroup.select('.xAxis') as TSelection;
 
-    // Adding the y Axis
-    chartGroup.append('g').call(d3.axisLeft(yScale));
+    xAxis.call(d3.axisBottom(xScale));
+
+    // Adding the x Axis
+    const yAxis = chartGroup.select('.yAxis') as TSelection;
+    yAxis.call(d3.axisLeft(yScale));
   }, [data, svg]);
 
   return (
@@ -119,7 +119,10 @@ export const BarChart: React.FC = (props) => {
           Add Data
         </Button>
         <svg ref={svgRef}>
-          <g className='chartGroup' transform={'translate(' + margin.left + ',' + margin.top + ')'}></g>
+          <g className='chartGroup' transform={'translate(' + margin.left + ',' + margin.top + ')'}>
+            <g className='xAxis' transform={'translate(0,' + height + ')'}></g>
+            <g className='yAxis'> </g>
+          </g>
         </svg>
       </Stack>
     </>
