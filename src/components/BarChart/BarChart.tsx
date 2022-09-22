@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { TSelection } from 'src/d3Types';
+import { Button, Stack } from '@mui/material';
 
-const barData = [
+const initalData = [
   { value: 2400, name: 'Chevrolet' },
   { value: 1230, name: 'Honda' },
   { value: 330, name: 'Nissan' },
@@ -29,6 +30,8 @@ export const BarChart: React.FC = (props) => {
 
   const svgRef = useRef<null | SVGSVGElement>(null);
 
+  const [data, setData] = useState(initalData);
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
@@ -49,13 +52,13 @@ export const BarChart: React.FC = (props) => {
     const chartGroup = svg.select('.chartGroup');
 
     // Scaling the range of the data in the domains
-    xScale.domain(barData.map((d) => d.name));
-    yScale.domain([0, d3.max(barData, (d) => d.value)]);
+    xScale.domain(data.map((d) => d.name));
+    yScale.domain([0, d3.max(data, (d) => d.value)]);
 
     // Appending the rectangles for the bar chart
     chartGroup
       .selectAll('.bar')
-      .data(barData)
+      .data(data)
       .enter()
       .append('rect')
       .attr('x', (d) => xScale(d.name))
@@ -76,14 +79,24 @@ export const BarChart: React.FC = (props) => {
     // Adding the y Axis
     const yAxis = chartGroup.select('.yAxis') as TSelection;
     yAxis.call(d3.axisLeft(yScale));
-  }, [svg]);
+  }, [svg, data]);
 
   return (
-    <svg ref={svgRef}>
-      <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
-        <g className='xAxis' transform={`translate(0,${height})`} />
-        <g className='yAxis' />
-      </g>
-    </svg>
+    <Stack>
+      <Button
+        variant='contained'
+        onClick={() => {
+          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: `Item${currData.length}` }]);
+        }}
+      >
+        Add Data
+      </Button>
+      <svg ref={svgRef}>
+        <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
+          <g className='xAxis' transform={`translate(0,${height})`} />
+          <g className='yAxis' />
+        </g>
+      </svg>
+    </Stack>
   );
 };
