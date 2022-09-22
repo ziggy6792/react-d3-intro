@@ -3,6 +3,7 @@ import { createTheme } from '@mui/material';
 type MyType = typeof palette['common'];
 
 declare module '@mui/material/styles/createPalette' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface CommonColors extends MyType {}
 }
 
