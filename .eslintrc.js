@@ -10,7 +10,8 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
   ignorePatterns: ['build', '*.config.js', 'node_modules', 'src/gql/types/', 'src/generated-types.tsx'],
-  extends: ['airbnb-typescript', 'airbnb/hooks', 'prettier'],
+  extends: ['airbnb-base', 'eslint:recommended', 'plugin:@typescript-eslint/recommended', 'airbnb/hooks', 'prettier'],
+
   parser: '@typescript-eslint/parser',
 
   parserOptions: {
@@ -25,6 +26,7 @@ module.exports = {
 
   rules: {
     // 'no-console': 'off',
+    'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['warn'],
