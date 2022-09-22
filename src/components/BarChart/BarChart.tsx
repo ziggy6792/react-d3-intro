@@ -75,6 +75,7 @@ export const BarChart: React.FC = (props) => {
       .attr('height', 0)
       .transition()
       .duration(800)
+      .ease(d3.easeElastic)
       .attr('y', (d) => yScale(d.value))
       .attr('height', (d) => height - yScale(d.value))
       .delay((d, i) => i * 100);
@@ -114,6 +115,7 @@ export const BarChart: React.FC = (props) => {
             .attr('height', 0)
             .transition()
             .duration(800)
+            .ease(d3.easeElastic)
             .attr('y', (d) => yScale(d.value))
             .attr('height', (d) => height - yScale(d.value)),
         (elem) =>
@@ -121,6 +123,7 @@ export const BarChart: React.FC = (props) => {
             .transition()
             .duration(100)
             .delay(100)
+
             .attr('x', (d) => xScale(d.name))
             .attr('width', xScale.bandwidth()),
         (elem) => elem.transition().duration(100).attr('height', 0).attr('y', height).remove()
