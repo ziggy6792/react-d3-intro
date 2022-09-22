@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Button } from '@mui/material';
+import { TSelection } from 'src/d3Types';
 
 const initialData = [
   { value: 2400, name: 'Chevrolet' },
@@ -21,11 +22,17 @@ const initialData = [
 export const BarChart: React.FC = (props) => {
   const [data, setData] = useState(initialData);
 
-  useEffect(() => {
-    // Selecting the element
-    const element = document.getElementById('bar-chart');
+  const [svg, setSvg] = useState<null | TSelection>(null);
 
-    d3.select(element).select('svg').remove();
+  const svgRef = useRef<null | SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (!svg) {
+      setSvg(d3.select(svgRef.current));
+      return;
+    }
+
+    // d3.select(element).select('svg').remove();
 
     // Setting dimensions
     const margin = { top: 40, right: 20, bottom: 50, left: 50 };
@@ -37,15 +44,13 @@ export const BarChart: React.FC = (props) => {
 
     const yScale = d3.scaleLinear().range([height, 0]);
 
-    // Appending svg to a selected element
-    const svg = d3
-      .select(element)
-      .append('svg')
+    svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
-      .attr('viewBox', `0 40 ${width + 80} ${height}`)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+      .attr('viewBox', `0 40 ${width + 80} ${height}`);
+
+    // Appending svg to a selected element
+    const axisGroup = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Formatting the data
     data.forEach((d) => {
@@ -57,7 +62,7 @@ export const BarChart: React.FC = (props) => {
     yScale.domain([0, d3.max(data, (d) => d.value)]);
 
     // Appending the rectangles for the bar chart
-    svg
+    axisGroup
       .selectAll('.bar')
       .data(data)
       .enter()
@@ -74,11 +79,11 @@ export const BarChart: React.FC = (props) => {
       .delay((d, i) => i * 100);
 
     // Adding the x Axis
-    svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
+    axisGroup.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
 
     // Adding the y Axis
-    svg.append('g').call(d3.axisLeft(yScale));
-  }, [data]);
+    axisGroup.append('g').call(d3.axisLeft(yScale));
+  }, [data, svg]);
 
   return (
     <>
@@ -90,7 +95,7 @@ export const BarChart: React.FC = (props) => {
       >
         Add Data
       </Button>
-      <div id='bar-chart' className='chart'></div>
+      <svg ref={svgRef} />
     </>
   );
 };
