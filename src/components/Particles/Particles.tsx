@@ -1,16 +1,15 @@
+/* eslint-disable no-restricted-globals */
 import { useEffect } from 'react';
 import * as d3 from 'd3';
 
-interface IParticlesProps {}
-
-const Particles: React.FC<IParticlesProps> = (props) => {
+const Particles: React.FC = (props) => {
   useEffect(() => {
-    var width = Math.max(960, innerWidth),
-      height = Math.max(500, innerHeight);
+    const width = Math.max(960, innerWidth);
+    const height = Math.max(500, innerHeight);
 
-    var i = 0;
+    const i = 0;
 
-    var svg = d3.select('body').append('svg').attr('width', width).attr('height', height);
+    const svg = d3.select('body').append('svg').attr('width', width).attr('height', height);
 
     svg
       .append('rect')
@@ -19,7 +18,7 @@ const Particles: React.FC<IParticlesProps> = (props) => {
       .on('ontouchstart' in document ? 'touchmove' : 'mousemove', particle);
 
     function particle(event) {
-      var m = d3.pointer(event);
+      const m = d3.pointer(event);
 
       svg
         .insert('circle', 'rect')
