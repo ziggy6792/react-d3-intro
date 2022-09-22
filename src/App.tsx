@@ -1,6 +1,4 @@
 import React from 'react';
-import { SimulationProvier } from './components/Simulation/SimulaitionProvider';
-import Simulation from './components/Simulation/Simulation';
 import createCache from '@emotion/cache';
 import { ThemeProvider } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
@@ -21,25 +19,10 @@ window.addEventListener('resize', () => {
   calcVh();
 });
 
-const App: React.FC = () => {
-  return (
-    <CacheProvider value={muiCache}>
-      <ThemeProvider theme={theme}>
-        <SimulationProvier>
-          <div
-            style={{
-              height: 'calc(100 * var(--vh))',
-              width: '100%',
-              position: 'fixed',
-              zIndex: -1,
-              backgroundImage: 'linear-gradient(rgb(11, 21, 64), rgb(35, 5, 38))',
-            }}
-          ></div>
-          <Simulation />
-        </SimulationProvier>
-      </ThemeProvider>
-    </CacheProvider>
-  );
-};
+const App: React.FC = () => (
+  <CacheProvider value={muiCache}>
+    <ThemeProvider theme={theme}></ThemeProvider>
+  </CacheProvider>
+);
 
 export default App;
