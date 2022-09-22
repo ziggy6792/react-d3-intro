@@ -137,6 +137,8 @@ export const BarChart: React.FC = (props) => {
             .attr('height', (d) => height - yScale(d.value)),
         (elem) =>
           elem
+            .transition()
+            .duration(100)
             .attr('x', function (d) {
               return xScale(d.name);
             })
@@ -146,8 +148,9 @@ export const BarChart: React.FC = (props) => {
     // Update X axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
 
-    xAxis.call(d3.axisBottom(xScale));
-  }, [data, svg, xScale, yScale]);
+    xAxis.transition().duration(100).delay(100).call(d3.axisBottom(xScale));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>
