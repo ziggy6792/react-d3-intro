@@ -139,10 +139,12 @@ export const BarChart: React.FC = (props) => {
           elem
             .transition()
             .duration(100)
+            .delay(100)
             .attr('x', function (d) {
               return xScale(d.name);
             })
-            .attr('width', xScale.bandwidth())
+            .attr('width', xScale.bandwidth()),
+        (elem) => elem.transition().duration(100).attr('height', 0).attr('y', height).remove()
       );
 
     // Update X axis
@@ -162,6 +164,14 @@ export const BarChart: React.FC = (props) => {
           }}
         >
           Add Data
+        </Button>
+        <Button
+          variant='contained'
+          onClick={() => {
+            setData((currData) => currData.splice(0, currData.length - 1));
+          }}
+        >
+          Remove Data
         </Button>
         <svg ref={svgRef}>
           <g className='chartGroup' transform={'translate(' + margin.left + ',' + margin.top + ')'}>
