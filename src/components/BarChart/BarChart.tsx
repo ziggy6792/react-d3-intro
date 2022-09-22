@@ -55,12 +55,15 @@ export const BarChart: React.FC = (props) => {
     xScale.domain(data.map((d) => d.name));
     yScale.domain([0, d3.max(data, (d) => d.value)]);
 
+    chartGroup.selectAll('.bar').remove();
+
     // Appending the rectangles for the bar chart
     chartGroup
       .selectAll('.bar')
       .data(data)
       .enter()
       .append('rect')
+      .attr('class', 'bar')
       .attr('x', (d) => xScale(d.name))
       .attr('width', xScale.bandwidth())
       .style('fill', '#339cd9')
