@@ -25,29 +25,24 @@ export const BarChart: React.FC = (props) => {
 
   const svgRef = useRef<null | SVGSVGElement>(null);
 
+  // Setting dimensions
+  const margin = { top: 40, right: 20, bottom: 50, left: 50 };
+  const width = 900 - margin.left - margin.right;
+  const height = 480 - margin.top - margin.bottom;
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
       return;
     }
 
-    // Setting dimensions
-    const margin = { top: 40, right: 20, bottom: 50, left: 50 };
-    const width = 900 - margin.left - margin.right;
-    const height = 480 - margin.top - margin.bottom;
-
     // Setting X,Y scale ranges
     const xScale = d3.scaleBand().range([0, width]).padding(0.1);
 
     const yScale = d3.scaleLinear().range([height, 0]);
 
-    svg
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .attr('viewBox', `0 40 ${width + 80} ${height}`);
-
     // Appending svg to a selected element
-    const chartGroup = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+    const chartGroup = svg.select('g');
 
     // Scaling the range of the data in the domains
     xScale.domain(barData.map((d) => d.name));
@@ -71,11 +66,22 @@ export const BarChart: React.FC = (props) => {
       .attr('height', (d) => height - yScale(d.value));
 
     // Adding the x Axis
-    chartGroup.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
+    const xAxis = chartGroup.select('.xAxis') as TSelection;
+    xAxis.call(d3.axisBottom(xScale));
 
     // Adding the y Axis
-    chartGroup.append('g').call(d3.axisLeft(yScale));
+    const yAxis = chartGroup.select('.yAxis') as TSelection;
+    yAxis.call(d3.axisLeft(yScale));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [svg]);
 
-  return <svg ref={svgRef}>hi</svg>;
+  return (
+    <svg ref={svgRef} width={width} height={height} viewBox={`0 40 ${width + 80} ${height}`}>
+      <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
+        <g className='xAxis' transform={`translate(0,${height})`} />
+        <g className='yAxis'> </g>
+      </g>
+    </svg>
+  );
 };
