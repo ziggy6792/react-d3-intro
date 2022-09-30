@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { Button, Stack } from '@mui/material';
 import { TSelection } from 'src/d3Types';
 
-const barData = [
+const initialData = [
   { value: 2400, name: 'Chevrolet' },
   { value: 1230, name: 'Honda' },
   { value: 330, name: 'Nissan' },
@@ -21,6 +21,8 @@ const barData = [
 
 // eslint-disable-next-line arrow-body-style
 export const BarChart: React.FC = (props) => {
+  const [data, setData] = useState(initialData);
+
   const [svg, setSvg] = useState<null | TSelection>(null);
 
   const svgRef = useRef<null | SVGSVGElement>(null);
@@ -45,15 +47,18 @@ export const BarChart: React.FC = (props) => {
     const chartGroup = svg.select('g');
 
     // Scaling the range of the data in the domains
-    xScale.domain(barData.map((d) => d.name));
-    yScale.domain([0, d3.max(barData, (d) => d.value)]);
+    xScale.domain(data.map((d) => d.name));
+    yScale.domain([0, d3.max(data, (d) => d.value)]);
+
+    chartGroup.selectAll('.bar').remove();
 
     // Appending the rectangles for the bar chart
     chartGroup
       .selectAll('.bar')
-      .data(barData)
+      .data(data)
       .enter()
       .append('rect')
+      .attr('class', 'bar')
       .attr('x', (d) => xScale(d.name))
       .attr('width', xScale.bandwidth())
       .style('fill', '#339cd9')
@@ -74,14 +79,24 @@ export const BarChart: React.FC = (props) => {
     yAxis.call(d3.axisLeft(yScale));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [svg]);
+  }, [svg, data]);
 
   return (
-    <svg ref={svgRef} width={width} height={height} viewBox={`0 40 ${width + 80} ${height}`}>
-      <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
-        <g className='xAxis' transform={`translate(0,${height})`} />
-        <g className='yAxis'> </g>
-      </g>
-    </svg>
+    <Stack>
+      <Button
+        variant='contained'
+        onClick={() => {
+          setData((currData) => [...currData, { value: Math.round(Math.random() * 6000) + 500, name: `Item${currData.length}` }]);
+        }}
+      >
+        Add Data
+      </Button>
+      <svg ref={svgRef} width={width} height={height} viewBox={`0 40 ${width + 80} ${height}`}>
+        <g className='chartGroup' transform={`translate(${margin.left},${margin.top})`}>
+          <g className='xAxis' transform={`translate(0,${height})`} />
+          <g className='yAxis'> </g>
+        </g>
+      </svg>
+    </Stack>
   );
 };
