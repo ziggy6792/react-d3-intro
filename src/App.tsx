@@ -21,7 +21,7 @@ window.addEventListener('resize', () => {
 
 const App: React.FC = () => (
   <CacheProvider value={muiCache}>
-    <ThemeProvider theme={theme}></ThemeProvider>
+    <ThemeProvider theme={theme} />
   </CacheProvider>
 );
 
