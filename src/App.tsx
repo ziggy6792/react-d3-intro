@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
 import theme from './theme';
 import { Particles } from './components/Particles';
+import { BarChart } from './components/BarChart';
 
 export const muiCache = createCache({
   key: 'mui',
@@ -23,7 +24,8 @@ window.addEventListener('resize', () => {
 const App: React.FC = () => (
   <CacheProvider value={muiCache}>
     <ThemeProvider theme={theme}>
-      <Particles />
+      {/* <Particles /> */}
+      <BarChart />
     </ThemeProvider>
   </CacheProvider>
 );
