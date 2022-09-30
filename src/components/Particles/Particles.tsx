@@ -19,7 +19,7 @@ export const Particles: React.FC = (props) => {
       .on('ontouchstart' in document ? 'touchmove' : 'mousemove', particle);
 
     function particle(event) {
-      const m = d3.point(this);
+      const m = d3.pointer(this);
 
       svg
         .insert('circle', 'rect')
