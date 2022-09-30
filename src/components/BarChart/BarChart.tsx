@@ -90,25 +90,35 @@ export const BarChart: React.FC = (props) => {
     // Appending svg to a selected element
     const chartGroup = svg.select('g');
 
-    chartGroup.selectAll('.bar').remove();
+    // chartGroup.selectAll('.bar').remove();
 
     // Appending the rectangles for the bar chart
     chartGroup
       .selectAll('.bar')
       .data(data)
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', (d) => xScale(d.name))
-      .attr('width', xScale.bandwidth())
-      .style('fill', '#339cd9')
-      .attr('y', () => height)
-      .attr('height', 0)
-      .transition()
-      .duration(800)
-      .delay((d, i) => i * 100)
-      .attr('y', (d) => yScale(d.value))
-      .attr('height', (d) => height - yScale(d.value));
+      .join(
+        (nodeParent) =>
+          nodeParent
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', (d) => xScale(d.name))
+            .attr('width', xScale.bandwidth())
+            .style('fill', '#339cd9')
+            .attr('y', () => height)
+            .attr('height', 0)
+            .transition()
+            .duration(800)
+
+            .attr('y', (d) => yScale(d.value))
+            .attr('height', (d) => height - yScale(d.value)),
+        (elem) =>
+          elem
+            .transition()
+            .duration(100)
+            .delay(100)
+            .attr('x', (d) => xScale(d.name))
+            .attr('width', xScale.bandwidth())
+      );
 
     // Adding the x Axis
     const xAxis = chartGroup.select('.xAxis') as TSelection;
