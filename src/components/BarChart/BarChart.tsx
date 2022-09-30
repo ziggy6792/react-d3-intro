@@ -32,23 +32,63 @@ export const BarChart: React.FC = (props) => {
   const width = 900 - margin.left - margin.right;
   const height = 480 - margin.top - margin.bottom;
 
+  const { xScale, yScale } = useMemo(() => {
+    const xS = d3.scaleBand().range([0, width]).padding(0.1);
+
+    const yS = d3.scaleLinear().range([height, 0]);
+
+    // Scaling the range of the data in the domains
+    xS.domain(data.map((d) => d.name));
+    yS.domain([0, d3.max(data, (d) => d.value)]);
+    return { xScale: xS, yScale: yS };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   useEffect(() => {
     if (!svg) {
       setSvg(d3.select(svgRef.current));
       return;
     }
 
-    // Setting X,Y scale ranges
-    const xScale = d3.scaleBand().range([0, width]).padding(0.1);
-
-    const yScale = d3.scaleLinear().range([height, 0]);
-
     // Appending svg to a selected element
     const chartGroup = svg.select('g');
 
-    // Scaling the range of the data in the domains
-    xScale.domain(data.map((d) => d.name));
-    yScale.domain([0, d3.max(data, (d) => d.value)]);
+    // Appending the rectangles for the bar chart
+    chartGroup
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => xScale(d.name))
+      .attr('width', xScale.bandwidth())
+      .style('fill', '#339cd9')
+      .attr('y', () => height)
+      .attr('height', 0)
+      .transition()
+      .duration(800)
+      .delay((d, i) => i * 100)
+      .attr('y', (d) => yScale(d.value))
+      .attr('height', (d) => height - yScale(d.value));
+
+    // Adding the x Axis
+    const xAxis = chartGroup.select('.xAxis') as TSelection;
+    xAxis.call(d3.axisBottom(xScale));
+
+    // Adding the y Axis
+    const yAxis = chartGroup.select('.yAxis') as TSelection;
+    yAxis.call(d3.axisLeft(yScale));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [svg]);
+
+  useEffect(() => {
+    if (!svg) {
+      return;
+    }
+
+    // Appending svg to a selected element
+    const chartGroup = svg.select('g');
 
     chartGroup.selectAll('.bar').remove();
 
@@ -79,7 +119,7 @@ export const BarChart: React.FC = (props) => {
     yAxis.call(d3.axisLeft(yScale));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [svg, data]);
+  }, [data]);
 
   return (
     <Stack>
